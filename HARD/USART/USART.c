@@ -7,8 +7,8 @@
 #include "stdlib.h"
 #include "WORK.h"
 
-#define SETLCDID1 "SET LCD ID:0\r\n"
-#define SETLCDID2 "SET LCD ID:10\r\n"
+#define SETLCDID1 "SET ID:0\r\n"
+#define SETLCDID2 "SET ID:10\r\n"
 
 u32 receive_finish = 0;
 u8 rec_buf[32] = {0};
@@ -168,9 +168,9 @@ void USART1_Receive_DataAnalysis(void)
         }
         else if(rec_data_len == strlen(SETLCDID1) || rec_data_len == strlen(SETLCDID2))
         {
-            if(strncmp((char*)rec_buf,"SET LCD ID:", strlen("SET LCD ID:")) == 0)
+            if(strncmp((char*)rec_buf,"SET ID:", strlen("SET ID:")) == 0)
             {
-                u16 num = atoi((char*)rec_buf + strlen("SET LCD ID:"));
+                u16 num = atoi((char*)rec_buf + strlen("SET ID:"));
                 u16 lcdid = 0xff;
                 
                 if(num > 0 && rec_buf[rec_data_len-1] == '\n' && rec_buf[rec_data_len-2] == '\r')
@@ -191,6 +191,7 @@ void USART1_Receive_DataAnalysis(void)
                        strcpy((char*)buf_reply_LCDID,(char*)rec_buf);
                        strcat((char*)buf_reply_LCDID,"error\r\n");
                    }
+                   Display_Id();
                 }
                 else if(rec_buf[rec_data_len-3] == '?')
                 {
@@ -215,7 +216,7 @@ void USART1_Receive_DataAnalysis(void)
                 }
             }
         }
-        else if(rec_data_len == strlen("VERSION") && strncmp((char*)rec_buf,"VERSION", strlen("VERSION")) == 0)
+        else if(rec_data_len == strlen("VERSION\r\n") && strncmp((char*)rec_buf,"VERSION\r\n", strlen("VERSION\r\n")) == 0)
         {
             memset((char*)buf_reply_LCDID,0,sizeof(buf_reply_LCDID));
             strcat((char*)buf_reply_LCDID,(char*)Version);

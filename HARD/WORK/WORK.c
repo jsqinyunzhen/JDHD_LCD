@@ -17,7 +17,7 @@ void LED_IO_INIT(void)
 
 		PAout(8) = 0;
 }
-
+#if 0
 void TIME4_init(u16 arr,u16 psc)                      //定时器配置
 {
 	   TIM_TimeBaseInitTypeDef  TIM_init;
@@ -53,6 +53,7 @@ void TIM4_IRQHandler(void)                           //定时器中断函数
 	   }
 	   TIM_ClearITPendingBit(TIM4,TIM_IT_Update);
 }
+#endif
 
 #define STM32_FLASH_SIZE 	64 	 		//所选STM32的FLASH容量大小(单位为K)
 #define STM32_FLASH_WREN 	1              	//使能FLASH写入(0，不是能;1，使能)

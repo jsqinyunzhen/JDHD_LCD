@@ -32,8 +32,14 @@ void Display_InitializeEN(void)
     
     GPIO_ResetBits(GPIOC,DSP_CABINET_1);//|DSP_CABINET_2|DSP_CABINET_3|DSP_CABINET_4|DSP_CABINET_5|DSP_CABINET_6|DSP_CABINET_7|DSP_CABINET_8
 }
+#define DISP_EMPTY_X 34
+#define DISP_EMPTY_Y 0
+#define DISP_EMPTY_DX 158
+#define DISP_EMPTY_DY 64
+
 void Display_BatteryStatus(u8 id)
 {
+	  u8 *pImage = 0;
     if(id >= CABINETNUM)
     {
        // printf("Display_BatteryStatus ID Error!\r\n");
@@ -46,8 +52,8 @@ void Display_BatteryStatus(u8 id)
         case BAT_EMPTY:
         case BAT_ERROR:
         {
-            u8 *pImage = Display_GetBatteryStatusImage(id);
-            GLCD_Bitmap((char *)pImage,0,0,192,64);
+            pImage = Display_GetBatteryStatusImage(id);
+            GLCD_Bitmap((char *)pImage,DISP_EMPTY_X,DISP_EMPTY_Y,DISP_EMPTY_DX,DISP_EMPTY_DY);
         }
         break;
         
@@ -55,10 +61,10 @@ void Display_BatteryStatus(u8 id)
         case BAT_CHARGING:
         case BAT_RESERVED:
         {
-            u8 *pImage = Display_GetBatteryStatusImage(id);
+            pImage = Display_GetBatteryStatusImage(id);
             if(DispCabinet[id].updatescreen == 1)
             {
-                GLCD_Bitmap((char *)pImage,0,0,192,64);
+                GLCD_Bitmap((char *)pImage,DISP_EMPTY_X,DISP_EMPTY_Y,DISP_EMPTY_DX,DISP_EMPTY_DY);
                 DispCabinet[id].updatescreen = 0;
             }
             Display_BatterySOCImage(id);
@@ -89,10 +95,7 @@ void Display_AEChar(u16 x,u16 y,u8 size,u16 code)
 }   
 u32 xx = 0;
 
-#define DISP_EMPTY_X 0
-#define DISP_EMPTY_Y 0
-#define DISP_EMPTY_DX 192
-#define DISP_EMPTY_DY 64
+
 
 #define DISP_FULL_CHAR1_X 5
 #define DISP_FULL_CHAR_Y 10
@@ -161,13 +164,22 @@ u8 *  Display_GetBatteryStatusImage(u8 id)
         }
         case BAT_ERROR:
         {
-            extern u8 error_image[];
-            return error_image;
+           // extern u8 error_image[];
+            //return error_image;
         }
     }
     return 0;
 }
-#define BATTERY_IMAGE_X 127
+u8 *  Display_GetNumberImage(u8 id)
+{
+   u8 * pimage[10] ={
+    number00_image,number01_image,number02_image,number03_image,number04_image,number05_image,
+    number06_image,number07_image,number08_image,number09_image
+   };
+    return pimage[id%10];
+}
+
+#define BATTERY_IMAGE_X 137
 #define BATTERY_IMAGE_Y 4
 #define BATTERY_IMAGE_DX 12
 #define BATTERY_IMAGE_DY 24
@@ -209,7 +221,7 @@ u8 *  Display_BatterySOCImage(u8 id)
     }
 		return 0;
 }
-#define SOC_PERCENT_X 174
+#define SOC_PERCENT_X 184
 #define SOC_PERCENT_Y 5
 #define SOC_PERCENT_DX 64
 #define SOC_PERCENT_DY 16
@@ -272,6 +284,7 @@ void Display_ChangeCurLcdId(void)
       //  printf("ALL LCD Timeout!\r\n");
     }
 }
+u8   display_id_flag = 1;
 
 void Display_CabinetStatus()
 {
@@ -284,6 +297,17 @@ void Display_CabinetStatus()
         Display_ChangeCurLcdId();
         // Display_CabinetDataTest(CurDispNum);
         Display_BatteryStatus(CurDispNum);
+        if(display_id_flag)
+        {
+            display_id_flag =0;
+            Display_Id();
+        }
+#if 0
+        LCD_ID ++;display_id_flag =1;
+        DispCabinet[CurDispNum].cs ++;
+        DispCabinet[CurDispNum].cs %=BAT_ERROR;
+        DispCabinet[CurDispNum].updatescreen = 1;
+#endif
 #if 0 //≤‚ ‘ π”√
 {
         Battery_tatus old_cs = 0;
@@ -306,6 +330,14 @@ void Display_CabinetStatus()
     }
 }
 extern uint8_t Version[];
+void Display_Id(void)
+{
+    u8 *pImage = 0;
+    pImage = Display_GetNumberImage((LCD_ID+1)/10);//imageid++%8
+    GLCD_Bitmap((char *)pImage,5,3,12,24);
+     pImage = Display_GetNumberImage((LCD_ID+1)%10);//imageid++%8
+    GLCD_Bitmap((char *)pImage,5+13,3,12,24);
+}
 void Display_Init(void)
 {
     u8 i = 0;

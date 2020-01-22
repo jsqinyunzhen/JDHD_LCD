@@ -76,6 +76,15 @@ for(j = 0; j < KS0108_SCREEN_HEIGHT/8; j++)
 	}
 	}
 }
+u16 GLCD_change(u8 x1,u8 x2)
+{
+    u16 x =0;
+    x = ((u16)x1 << 8) | x2;
+    x = x>>2;
+    return x;
+}
+
+#if 0
 //-------------------------------------------------------------------------------------------------
 // Writes char to screen memory
 //-------------------------------------------------------------------------------------------------
@@ -92,52 +101,7 @@ for(i = 0; i < 5; i++)
   //GLCD_WriteData(GLCD_ReadByteFromROMMemory((char *)(pchar + i))); 
   GLCD_WriteData(0x00);
 }
-u16 GLCD_change(u8 x1,u8 x2)
-{
-    u16 x =0;
-    x = ((u16)x1 << 8) | x2;
-    x = x>>2;
-    return x;
-}
-void GLCD_WriteChar16x8(char charToWrite,unsigned char x, unsigned char y)
-{
-    char i;
-    char *pchar = 0;
-    unsigned char dy,dx;
 
-    unsigned char  j;
-    u16 c = 0;
-    //unsigned char xxx [] ={0x00,0x00,0x00,0x00,0x00,0x00,0x1F,0xCC,0x00,0x0C,0x00,0x00,0x00,0x00,0x00,0x00};
-    charToWrite -= ' ';
-    if(charToWrite > sizeof(asc2_1608)/sizeof(asc2_1608[0]))
-    {
-        charToWrite = sizeof(asc2_1608)/sizeof(asc2_1608[0])-1;
-    }
-    pchar = (char*)(asc2_1608[charToWrite]);
-    dy = 16;
-    dx = 8;
-  
-    for(j = 0; j < dy / 8; j++)
-    {
-        GLCD_GoTo(x,y + j);
-        //GLCD_TextGoTo(x,y + j);
-        for(i = 0; i < dx; i++) 
-        {
-            c = GLCD_change(*(pchar+i+8),*(pchar+i));
-            //GLCD_WriteData(c);//*(pchar+ i*2+j)
-            if(j == 1)
-            {
-               c = c >> 8;
-            }
-            GLCD_WriteData((u8)c);
-        }
-    }
-
-
-
-  
-  //GLCD_WriteData(0x00);
-}
 
 void GLCD_WriteLong(unsigned int intTowrite)
 {
@@ -192,6 +156,46 @@ while(i--)
 
 
 
+}
+#endif
+void GLCD_WriteChar16x8(char charToWrite,unsigned char x, unsigned char y)
+{
+    char i;
+    char *pchar = 0;
+    unsigned char dy,dx;
+
+    unsigned char  j;
+    u16 c = 0;
+    //unsigned char xxx [] ={0x00,0x00,0x00,0x00,0x00,0x00,0x1F,0xCC,0x00,0x0C,0x00,0x00,0x00,0x00,0x00,0x00};
+    charToWrite -= ' ';
+    if(charToWrite > sizeof(asc2_1608)/sizeof(asc2_1608[0]))
+    {
+        charToWrite = sizeof(asc2_1608)/sizeof(asc2_1608[0])-1;
+    }
+    pchar = (char*)(asc2_1608[charToWrite]);
+    dy = 16;
+    dx = 8;
+  
+    for(j = 0; j < dy / 8; j++)
+    {
+        GLCD_GoTo(x,y + j);
+        //GLCD_TextGoTo(x,y + j);
+        for(i = 0; i < dx; i++) 
+        {
+            c = GLCD_change(*(pchar+i+8),*(pchar+i));
+            //GLCD_WriteData(c);//*(pchar+ i*2+j)
+            if(j == 1)
+            {
+               c = c >> 8;
+            }
+            GLCD_WriteData((u8)c);
+        }
+    }
+
+
+
+  
+  //GLCD_WriteData(0x00);
 }
 
 

@@ -10,7 +10,7 @@
 #include "WORK.h"
 #include "KS0108.h"
 
-uint8_t Version[]={"V1.1 20191118"};
+uint8_t Version[]={"V1.2 20200122"};
 u32 sys_ms_cnt = 0;
 extern uint8_t Version[];
 u8 LCD_ID = 0x0;
@@ -76,10 +76,16 @@ u8 Breaker_CRC8(u8 *ptr, u8 len)
 
     return (crc); 
 }
+#define IAP_ADDR 0X08000000
+#define ApplicationAddress    0x08008000 //32k
+#define APP_OFFSET (ApplicationAddress-IAP_ADDR)
 
 int main()
 {
     SysTick_Config(72000);
+#if 1 //is iap
+    NVIC_SetVectorTable(NVIC_VectTab_FLASH,APP_OFFSET);
+#endif
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     iwdg_init();
     delay_init();

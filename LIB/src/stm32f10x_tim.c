@@ -74,14 +74,7 @@
   * @{
   */
 
-static void TI1_Config(TIM_TypeDef* TIMx, uint16_t TIM_ICPolarity, uint16_t TIM_ICSelection,
-                       uint16_t TIM_ICFilter);
-static void TI2_Config(TIM_TypeDef* TIMx, uint16_t TIM_ICPolarity, uint16_t TIM_ICSelection,
-                       uint16_t TIM_ICFilter);
-static void TI3_Config(TIM_TypeDef* TIMx, uint16_t TIM_ICPolarity, uint16_t TIM_ICSelection,
-                       uint16_t TIM_ICFilter);
-static void TI4_Config(TIM_TypeDef* TIMx, uint16_t TIM_ICPolarity, uint16_t TIM_ICSelection,
-                       uint16_t TIM_ICFilter);
+
 /**
   * @}
   */
@@ -267,6 +260,41 @@ void TIM_TimeBaseInit(TIM_TypeDef* TIMx, TIM_TimeBaseInitTypeDef* TIM_TimeBaseIn
      values immediately */
   TIMx->EGR = TIM_PSCReloadMode_Immediate;           
 }
+/**
+  * @brief  Enables or disables the specified TIM peripheral.
+  * @param  TIMx: where x can be 1 to 17 to select the TIMx peripheral.
+  * @param  NewState: new state of the TIMx peripheral.
+  *   This parameter can be: ENABLE or DISABLE.
+  * @retval None
+  */
+void TIM_Cmd(TIM_TypeDef* TIMx, FunctionalState NewState)
+{
+  /* Check the parameters */
+  assert_param(IS_TIM_ALL_PERIPH(TIMx));
+  assert_param(IS_FUNCTIONAL_STATE(NewState));
+  
+  if (NewState != DISABLE)
+  {
+    /* Enable the TIM Counter */
+    TIMx->CR1 |= TIM_CR1_CEN;
+  }
+  else
+  {
+    /* Disable the TIM Counter */
+    TIMx->CR1 &= (uint16_t)(~((uint16_t)TIM_CR1_CEN));
+  }
+}
+#if 0
+static void TI1_Config(TIM_TypeDef* TIMx, uint16_t TIM_ICPolarity, uint16_t TIM_ICSelection,
+                       uint16_t TIM_ICFilter);
+static void TI2_Config(TIM_TypeDef* TIMx, uint16_t TIM_ICPolarity, uint16_t TIM_ICSelection,
+                       uint16_t TIM_ICFilter);
+static void TI3_Config(TIM_TypeDef* TIMx, uint16_t TIM_ICPolarity, uint16_t TIM_ICSelection,
+                       uint16_t TIM_ICFilter);
+static void TI4_Config(TIM_TypeDef* TIMx, uint16_t TIM_ICPolarity, uint16_t TIM_ICSelection,
+                       uint16_t TIM_ICFilter);
+
+
 
 /**
   * @brief  Initializes the TIMx Channel1 according to the specified
@@ -796,30 +824,6 @@ void TIM_BDTRStructInit(TIM_BDTRInitTypeDef* TIM_BDTRInitStruct)
   TIM_BDTRInitStruct->TIM_AutomaticOutput = TIM_AutomaticOutput_Disable;
 }
 
-/**
-  * @brief  Enables or disables the specified TIM peripheral.
-  * @param  TIMx: where x can be 1 to 17 to select the TIMx peripheral.
-  * @param  NewState: new state of the TIMx peripheral.
-  *   This parameter can be: ENABLE or DISABLE.
-  * @retval None
-  */
-void TIM_Cmd(TIM_TypeDef* TIMx, FunctionalState NewState)
-{
-  /* Check the parameters */
-  assert_param(IS_TIM_ALL_PERIPH(TIMx));
-  assert_param(IS_FUNCTIONAL_STATE(NewState));
-  
-  if (NewState != DISABLE)
-  {
-    /* Enable the TIM Counter */
-    TIMx->CR1 |= TIM_CR1_CEN;
-  }
-  else
-  {
-    /* Disable the TIM Counter */
-    TIMx->CR1 &= (uint16_t)(~((uint16_t)TIM_CR1_CEN));
-  }
-}
 
 /**
   * @brief  Enables or disables the TIM peripheral Main Outputs.
@@ -2874,7 +2878,7 @@ static void TI4_Config(TIM_TypeDef* TIMx, uint16_t TIM_ICPolarity, uint16_t TIM_
   TIMx->CCMR2 = tmpccmr2;
   TIMx->CCER = tmpccer;
 }
-
+#endif
 /**
   * @}
   */

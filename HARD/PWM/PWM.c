@@ -1,6 +1,6 @@
 #include "PWM.h"
 #include "sys.h"
-
+#if 0
 void PWM_init(u16 arr,u16 psc)                       //PWM≈‰÷√
 {
 	  GPIO_InitTypeDef  GPIO_PWMinit;
@@ -57,5 +57,5 @@ void PWM_init(u16 arr,u16 psc)                       //PWM≈‰÷√
 	  TIM_Cmd(TIM3,ENABLE);
 }
 
-
+#endif
 

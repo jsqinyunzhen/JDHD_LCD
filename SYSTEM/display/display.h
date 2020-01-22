@@ -5,6 +5,7 @@
 
 #define CABINETNUM (1)
 extern uint32_t sys_ms_cnt;
+extern u8 LCD_ID;
 
 typedef enum{ 
     DSP_CABINET_1 = GPIO_Pin_15,
@@ -56,4 +57,6 @@ extern u8 *  Display_GetBatteryStatusImage(u8 id);
 extern u16 *  Display_GetBatteryStatusChar(u8 id);
 u8 *  Display_BatterySOCImage(u8 id);
 void  Display_BatterySOCPercent(u8 id);
+u8 *  Display_GetNumberImage(u8 id);
+void Display_Id(void);
 #endif
